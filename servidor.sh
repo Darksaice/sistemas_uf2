@@ -1,7 +1,9 @@
 #!/bin/bash
 
-PORT=8080
+PORT=2021
 
 echo "Servidor"
 
-nc -l -p $PORT
+echo "nc -l -p $PORT"
+
+echo "YES_IT_IS"
