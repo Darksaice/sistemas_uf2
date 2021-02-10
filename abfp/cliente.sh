@@ -19,9 +19,14 @@ if [ "$RESPONSE" != "OK_CONN" ]; then
 	exit 1
 fi
 
+echo "TEST $RESPONSE"
+
 echo "(6) HANDSHAKE"
 
 sleep 1
 echo "THIS_IS_MY_CLASSROOM" | nc -q 1 $IP_SERVER $PORT
+
+echo "(7) LISTEN HANDSHAKE RESPONSE"
+
 
 exit 0
