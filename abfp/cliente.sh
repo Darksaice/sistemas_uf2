@@ -30,7 +30,7 @@ echo "THIS_IS_MY_CLASSROOM" | nc -q 1 $IP_SERVER $PORT
 
 echo "(7) LISTEN HANDSHAKE RESPONSE"
 
-RESPONSE=`n -l -p $PORT`
+RESPONSE=`nc -l -p $PORT`
 
 echo "TEST HANDSHAKE RESPONSE"
 if [ "$RESPONSE" != "YES_IT_IS" ]; then
@@ -43,7 +43,7 @@ sleep 1
 echo "FILE_NAME $FILE_NAME" | nc -q 1 $IP_SERVER $PORT
 
 echo "(11) LISTEN FILE_NAME RESPONSE"
-RESPONSE=`n -l -p $PORT`
+RESPONSE=`nc -l -p $PORT`
 
 echo "TEST FILE_NAME RESPONSE"
 if [ "$RESPONSE" != "OK_FILE_NAME" ]; then
