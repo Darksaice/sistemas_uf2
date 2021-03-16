@@ -3,13 +3,18 @@
 PORT=2021
 
 IP_CLIENT="127.0.0.1"
-IP_SERVER="127.0.0.1"
+
+if [ "$1" == "" ]; then
+	IP_SERVER="127.0.0.1"
+else
+	 IP_SERVER="$1"
+fi
 
 FILE_NAME="archivo_salida.vaca"
 
 echo "Cliente ABFP"
 
-echo "(2) Sending Headers"
+echo "(2) Sending Headers to $IP_SERVER"
 
 echo "ABFP $IP_CLIENT" | nc -q 1 $IP_SERVER $PORT
 
@@ -37,10 +42,11 @@ if [ "$RESPONSE" != "YES_IT_IS" ]; then
 	echo "No se ha recibido el HANDSHAKE"
 	exit 2
 fi
+FILE_MD5=`echo $FILE_NAME | md5sum | cut -d " " -f 1`
 
 echo "(10) SENDING FILE_NAME"
 sleep 1
-echo "FILE_NAME $FILE_NAME" | nc -q 1 $IP_SERVER $PORT
+echo "FILE_NAME $FILE_NAME $FILE_MD5" | nc -q 1 $IP_SERVER $PORT
 
 echo "(11) LISTEN FILE_NAME RESPONSE"
 RESPONSE=`nc -l -p $PORT`
@@ -55,4 +61,9 @@ echo "(14) SENDING DATA"
 sleep 1
 cat $FILE_NAME | nc -q 1 $IP_SERVER $PORT
 
+echo "(15) LISTEN DATA RESPONSE"
+RESPONSE=`nc -l -p $PORT`
+
+echo "(18) DESPEDIDA"
+echo "GoodBye" | nc -q 1 $IP_SERVER $PORT
 exit 0
