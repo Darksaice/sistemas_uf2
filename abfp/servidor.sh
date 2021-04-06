@@ -41,9 +41,33 @@ if [ "$HANDSHAKE" != "THIS_IS_MY_CLASSROOM" ]; then
 	exit 2
 fi
 
-echo "(8) RESPONSE HANDSHAKE"
+echo "(8a) RESPONSE HANDSHAKE"
 sleep 1
 echo "YES_IT_IS" | nc -q 1 $IP_CLIENT $PORT
+
+#LEER NUM ARCHIVOS A RECIBIR
+
+echo "(8b) LISTEN NUM_FILES"
+NUM_FILES=`nc -l -p $PORT`
+
+PREFIX=`echo $NUM_FILES | cut -d " " -f 1`
+NUM=`echo $NUM_FILES | cut -d " " -f 2`
+
+if [ "$PREFIX" != "NUM_FILES" ]; then
+	echo "ERROR: Prefijo NUM_FILES incorrecto"
+
+	sleep 1
+	echo "KO_NUM_FILES" | nc -q 1 $IP_CLIENT $PORT
+	exit 2
+fi
+
+sleep 1
+echo "OK_NUM_FILES" | nc -q 1 $IP_CLIENT $PORT
+echo "NUM_FILES: $NUM"
+#BUCLE
+
+for NUMBER in `seq $NUM`; do
+
 
 echo "(9) LISTEN FILE_NAME"
 
@@ -79,6 +103,8 @@ echo "OK_FILE_NAME" | nc -q 1 $IP_CLIENT $PORT
 echo "(13) LISTEN DATA"
 echo $OUTPUT_PATH $NAME
 nc -l -p $PORT > $OUTPUT_PATH$NAME
+
+done
 
 echo "(16) RESPONSE DATA"
 sleep 1

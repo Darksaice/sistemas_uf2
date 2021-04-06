@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PORT=2021
+INPUT_PATH="entrada_cliente/"
 
 IP_CLIENT="127.0.0.1"
 
@@ -9,8 +10,6 @@ if [ "$1" == "" ]; then
 else
 	 IP_SERVER="$1"
 fi
-
-FILE_NAME="archivo_salida.vaca"
 
 echo "Cliente ABFP"
 
@@ -33,7 +32,7 @@ echo "(6) HANDSHAKE"
 sleep 1
 echo "THIS_IS_MY_CLASSROOM" | nc -q 1 $IP_SERVER $PORT
 
-echo "(7) LISTEN HANDSHAKE RESPONSE"
+echo "(7a) LISTEN HANDSHAKE RESPONSE"
 
 RESPONSE=`nc -l -p $PORT`
 
@@ -42,6 +41,28 @@ if [ "$RESPONSE" != "YES_IT_IS" ]; then
 	echo "No se ha recibido el HANDSHAKE"
 	exit 2
 fi
+
+#ENVIAR NUM ARCHIVOS
+
+echo "(7b) SENDING NUM_FILES"
+sleep 1
+
+NUM_FILES=`ls $INPUT_PATH | wc -w`
+
+echo "NUM_FILES $NUM_FILES" | nc -q 1 $IP_SERVER $PORT
+
+echo "(7c) LISTEN"
+RESPONSE=`nc -l -p $PORT`
+
+if [ "$RESPONSE" != "OK_NUM_FILES" ]; then
+	echo "ERROR: Prefijo NUM_FILES incorrecto"
+	exit 2
+fi
+
+#BUCLE
+
+for FILE_NAME in `ls $INPUT_PATH`; do
+
 FILE_MD5=`echo $FILE_NAME | md5sum | cut -d " " -f 1`
 
 echo "(10) SENDING FILE_NAME"
@@ -59,7 +80,9 @@ fi
 
 echo "(14) SENDING DATA"
 sleep 1
-cat $FILE_NAME | nc -q 1 $IP_SERVER $PORT
+cat $INPUT_PATH$FILE_NAME | nc -q 1 $IP_SERVER $PORT
+
+done
 
 echo "(15) LISTEN DATA RESPONSE"
 RESPONSE=`nc -l -p $PORT`
