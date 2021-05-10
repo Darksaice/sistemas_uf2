@@ -63,24 +63,24 @@ fi
 
 for FILE_NAME in `ls $INPUT_PATH`; do
 
-FILE_MD5=`echo $FILE_NAME | md5sum | cut -d " " -f 1`
+	FILE_MD5=`echo $FILE_NAME | md5sum | cut -d " " -f 1`
 
-echo "(10) SENDING FILE_NAME"
-sleep 1
-echo "FILE_NAME $FILE_NAME $FILE_MD5" | nc -q 1 $IP_SERVER $PORT
+	echo "(10) SENDING FILE_NAME"
+	sleep 1
+	echo "FILE_NAME $FILE_NAME $FILE_MD5" | nc -q 1 $IP_SERVER $PORT
 
-echo "(11) LISTEN FILE_NAME RESPONSE"
-RESPONSE=`nc -l -p $PORT`
+	echo "(11) LISTEN FILE_NAME RESPONSE"
+	RESPONSE=`nc -l -p $PORT`
 
-echo "TEST FILE_NAME RESPONSE"
-if [ "$RESPONSE" != "OK_FILE_NAME" ]; then
-	echo "Error al enviar el nombre del archivo"
-	exit 3
-fi
+	echo "TEST FILE_NAME RESPONSE"
+	if [ "$RESPONSE" != "OK_FILE_NAME" ]; then
+		echo "Error al enviar el nombre del archivo"
+		exit 3
+	fi
 
-echo "(14) SENDING DATA"
-sleep 1
-cat $INPUT_PATH$FILE_NAME | nc -q 1 $IP_SERVER $PORT
+	echo "(14) SENDING DATA"
+	sleep 1
+	cat $INPUT_PATH$FILE_NAME | nc -q 1 $IP_SERVER $PORT
 
 done
 
